@@ -2,7 +2,7 @@ from unittest import TestCase
 from unittest.mock import patch
 from pathlib import Path
 
-from botpass.fetcher import FetchSettings, Fetcher
+from botpass.fetcher import FetchSettings, Fetcher, _safe_headers
 
 
 class FetcherTests(TestCase):
@@ -19,6 +19,12 @@ class FetcherTests(TestCase):
         ])
         status, _, body, url = fetcher.follow_redirects("https://public.test/a", lambda _: next(responses))
         self.assertEqual((status, body, url), (200, b"ok", "https://public.test/b"))
+
+    def test_preserves_capitalized_content_type(self):
+        self.assertEqual(
+            _safe_headers({"Content-Type": "application/rss+xml"}),
+            {"content-type": "application/rss+xml"},
+        )
 
     @patch(
         "botpass.fetcher.validate_url",

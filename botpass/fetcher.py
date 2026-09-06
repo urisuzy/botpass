@@ -76,7 +76,10 @@ class Fetcher:
 
 
 def _safe_headers(headers):
-    content_type = headers.get("content-type", "application/octet-stream")
+    content_type = next(
+        (value for key, value in headers.items() if key.lower() == "content-type"),
+        "application/octet-stream",
+    )
     return {"content-type": content_type}
 
 
