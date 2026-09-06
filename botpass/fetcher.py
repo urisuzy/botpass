@@ -83,7 +83,7 @@ def _safe_headers(headers):
 def _botasaurus_request(url, cookies, settings):
     from botasaurus.request import Request, request
 
-    @request(max_retry=3)
+    @request(max_retry=3, output=None)
     def fetch_http(client: Request, data):
         response = client.get(
             data["url"],
