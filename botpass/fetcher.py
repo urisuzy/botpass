@@ -35,7 +35,7 @@ class Fetcher:
             status, headers, body = get(current)
             if status not in {301, 302, 303, 307, 308}:
                 return status, headers, body, current
-            location = headers.get("location")
+            location = next((value for key, value in headers.items() if key.lower() == "location"), None)
             if not location:
                 raise FetchError("redirect missing location header")
             current = validate_url(urljoin(current, location))
