@@ -1,0 +1,30 @@
+services:
+  botpass:
+    build: .
+    environment:
+      DATABASE_URL: postgresql://botpass:botpass@postgres:5432/botpass
+      FETCH_API_KEY: ${FETCH_API_KEY:?set FETCH_API_KEY in .env or your shell}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:8080:8080"
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: botpass
+      POSTGRES_USER: botpass
+      POSTGRES_PASSWORD: botpass
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U botpass -d botpass"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    volumes:
+      - botpass-postgres:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  botpass-postgres:
